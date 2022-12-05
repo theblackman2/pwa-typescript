@@ -77,4 +77,20 @@ self.addEventListener('message', (event) => {
   }
 });
 
+const cashName: string = "POST";
+
 // Any other custom service worker logic can go here.
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(cashName).then((cache) => cache.addAll(["https://jsonplaceholder.typicode.com/posts"]))
+  )
+})
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      if (response) return response;
+      return fetch(event.request)
+    })
+  )
+})
